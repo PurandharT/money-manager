@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
@@ -6,22 +6,9 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />   {/* ✅ ADD */}
-        <Route path="/home" element={<Home />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-import { useEffect, useState } from "react";
-
-function App() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
+  // PWA install listener
   useEffect(() => {
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
@@ -36,13 +23,25 @@ function App() {
   };
 
   return (
-    <div>
-      <button onClick={installApp} className="btn btn-success">
-        📲 Install App
-      </button>
+    <BrowserRouter>
+      <div className="container mt-3">
 
-      {/* your existing routes/components */}
-    </div>
+        {/* Install Button */}
+        {deferredPrompt && (
+          <button onClick={installApp} className="btn btn-success mb-3">
+            📲 Install App
+          </button>
+        )}
+
+        {/* Routes */}
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/home" element={<Home />} />
+        </Routes>
+
+      </div>
+    </BrowserRouter>
   );
 }
 

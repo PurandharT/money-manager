@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-
-const API = "https://money-manager.onrender.com/api/transactions";
+import API from "../api";
+//const API = "https://money-manager.onrender.com/api/transactions";
 
 function TransactionList({ refresh }) {
   const [data, setData] = useState([]);

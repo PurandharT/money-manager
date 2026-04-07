@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import API from "../api";
 function Signup() {
   const [form, setForm] = useState({ email: "", password: "" });
   const navigate = useNavigate();
@@ -8,7 +8,7 @@ function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    await fetch("https://money-manager.onrender.com/api/auth/signup", {
+    await fetch(`${API}/auth/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

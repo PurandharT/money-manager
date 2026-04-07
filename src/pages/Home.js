@@ -26,23 +26,27 @@ useEffect(() => {
 
   return (
     <div className="container mt-4">
-      <h1 className="text-center mb-4"> Smart Money Manager</h1>
+  <h2 className="text-center mb-4">Smart Money Manager</h2>
 
-      <div className="container mt-4">
   <div className="row">
-
-    <div className="col-md-4 mb-3">
+    
+    {/* Dashboard */}
+    <div className="col-md-4 col-12 mb-3">
       <Dashboard refresh={refresh} />
     </div>
 
-    <div className="col-md-8 mb-3">
+    {/* Add Transaction */}
+    <div className="col-md-8 col-12 mb-3">
       <AddTransaction setRefresh={setRefresh} />
-      <TransactionList refresh={refresh} />
     </div>
 
   </div>
+
+  {/* Transactions */}
+  <div className="mt-3">
+    <TransactionList refresh={refresh} />
+  </div>
 </div>
-    </div>
   );
 }
 

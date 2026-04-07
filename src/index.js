@@ -5,9 +5,9 @@ import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+// import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
-serviceWorkerRegistration.register();
+// serviceWorkerRegistration.register();
 
 
 //import reportWebVitals from './reportWebVitals';

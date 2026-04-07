@@ -6,9 +6,10 @@ function TransactionList({ refresh }) {
   const [data, setData] = useState([]);
   const [msg, setMsg] = useState(""); // ✅ NEW
 
-  useEffect(() => {
-    loadData();
-  }, [refresh]);
+useEffect(() => {
+  loadData();
+  // eslint-disable-next-line
+}, [refresh]);
 
   useEffect(() => {
   if (selectedPerson && !groupedData[selectedPerson]) {

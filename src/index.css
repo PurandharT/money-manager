@@ -11,3 +11,77 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+body {
+  background-color: #f5f7fa;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.card {
+  border-radius: 15px;
+  border: none;
+}
+
+h1 {
+  font-weight: bold;
+}
+
+button {
+  border-radius: 10px !important;
+}
+
+.container {
+  max-width: 100%;
+}
+
+.card {
+  border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 22px;
+  }
+
+  h4 {
+    font-size: 18px;
+  }
+}
+
+/* 🌈 Background */
+.auth-bg {
+  height: 100vh;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 🧾 Card */
+.auth-card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* 🔤 Title */
+.auth-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* 🔘 Button */
+.auth-btn {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* 🔗 Link */
+.auth-link {
+  text-align: center;
+  margin-top: 10px;
+}

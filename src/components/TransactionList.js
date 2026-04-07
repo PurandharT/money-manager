@@ -8,7 +8,7 @@ function TransactionList({ refresh }) {
 
 useEffect(() => {
   loadData();
-  // eslint-disable-next-line
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [refresh]);
 
   useEffect(() => {

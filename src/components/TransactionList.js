@@ -6,10 +6,10 @@ function TransactionList({ refresh }) {
   const [data, setData] = useState([]);
   const [msg, setMsg] = useState(""); // ✅ NEW
 
-useEffect(() => {
-  loadData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [refresh]);
+// useEffect(() => {
+//   loadData();
+//   // eslint-disable-next-line react-hooks/exhaustive-deps
+// }, [refresh]);
 
   useEffect(() => {
   if (selectedPerson && !groupedData[selectedPerson]) {
@@ -17,12 +17,13 @@ useEffect(() => {
   }
 }, [data]);
 
+  useEffect(() => {
   const loadData = async () => {
     try {
       const res = await fetch(API, {
         headers: {
-          "Authorization": localStorage.getItem("token")
-        }
+          Authorization: localStorage.getItem("token"),
+        },
       });
 
       const result = await res.json();
@@ -30,14 +31,15 @@ useEffect(() => {
       if (Array.isArray(result)) {
         setData(result);
       } else {
-        console.error("Error:", result);
         setData([]);
       }
-
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error(err);
     }
   };
+
+  loadData();
+}, [refresh]);
 
   // 💸 Payment
   const handlePayment = async (id) => {

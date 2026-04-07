@@ -34,11 +34,11 @@ function TransactionList({ refresh }) {
   }, [refresh]);
 
   // reset selected person if deleted
-  useEffect(() => {
-    if (selectedPerson && !data.find(d => d.person === selectedPerson)) {
-      setSelectedPerson(null);
-    }
-  }, [data]);
+useEffect(() => {
+  if (selectedPerson && !data.find(d => d.person === selectedPerson)) {
+    setSelectedPerson(null);
+  }
+}, [data, selectedPerson]); // ✅ FIXED
 
   // 💸 Payment
   const handlePayment = async (id) => {

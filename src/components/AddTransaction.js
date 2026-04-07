@@ -17,18 +17,24 @@ function AddTransaction({ setRefresh }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await fetch(API, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": localStorage.getItem("token")
-      },
-      body: JSON.stringify({
-  ...form,
-  remainingAmount: form.amount,
-  date: form.date ? new Date(form.date) : new Date()
-})
-    });
+    await fetch(`${API}/transactions`, {
+  method: "POST",
+  // headers: {
+  //   "Content-Type": "application/json",
+  //   "Authorization": localStorage.getItem("token") // ✅ MUST
+  // },
+  headers: {
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${localStorage.getItem("token")}`
+},
+  body: JSON.stringify({
+    ...form,
+    remainingAmount: form.amount
+  })
+});
+
+const token = localStorage.getItem("token");
+console.log("TOKEN:", token);
 
     // ✅ SHOW MESSAGE
     setMessage("Transaction Added ✅");

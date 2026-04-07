@@ -4,20 +4,10 @@ const API = "https://money-manager.onrender.com/api/transactions";
 
 function TransactionList({ refresh }) {
   const [data, setData] = useState([]);
-  const [msg, setMsg] = useState(""); // ✅ NEW
+  const [msg, setMsg] = useState("");
+  const [selectedPerson, setSelectedPerson] = useState(null);
 
-// useEffect(() => {
-//   loadData();
-//   // eslint-disable-next-line react-hooks/exhaustive-deps
-// }, [refresh]);
-
-  useEffect(() => {
-  if (selectedPerson && !groupedData[selectedPerson]) {
-    setSelectedPerson(null);
-  }
-}, [data]);
-
- useEffect(() => {
+  // ✅ DEFINE loadData OUTSIDE
   const loadData = async () => {
     try {
       const res = await fetch(API, {
@@ -38,8 +28,17 @@ function TransactionList({ refresh }) {
     }
   };
 
-  loadData();
-}, [refresh]);
+  // ✅ useEffect clean
+  useEffect(() => {
+    loadData();
+  }, [refresh]);
+
+  // reset selected person if deleted
+  useEffect(() => {
+    if (selectedPerson && !data.find(d => d.person === selectedPerson)) {
+      setSelectedPerson(null);
+    }
+  }, [data]);
 
   // 💸 Payment
   const handlePayment = async (id) => {
@@ -50,14 +49,13 @@ function TransactionList({ refresh }) {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": localStorage.getItem("token")
+        Authorization: localStorage.getItem("token"),
       },
-      body: JSON.stringify({ amount: Number(amount) })
+      body: JSON.stringify({ amount: Number(amount) }),
     });
 
     setMsg("Payment Updated ✅");
     setTimeout(() => setMsg(""), 2000);
-
     loadData();
   };
 
@@ -70,17 +68,16 @@ function TransactionList({ refresh }) {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": localStorage.getItem("token")
+        Authorization: localStorage.getItem("token"),
       },
       body: JSON.stringify({
         amount: Number(newAmount),
-        purpose: newPurpose
-      })
+        purpose: newPurpose,
+      }),
     });
 
     setMsg("Updated Successfully ✅");
     setTimeout(() => setMsg(""), 2000);
-
     loadData();
   };
 
@@ -89,126 +86,108 @@ function TransactionList({ refresh }) {
     await fetch(`${API}/${id}`, {
       method: "DELETE",
       headers: {
-        "Authorization": localStorage.getItem("token")
-      }
+        Authorization: localStorage.getItem("token"),
+      },
     });
 
     setMsg("Deleted Successfully 🗑️");
     setTimeout(() => setMsg(""), 2000);
-
     loadData();
   };
 
-  const groupByPerson = () => {
-  const grouped = {};
-
-  data.forEach(item => {
-    if (!grouped[item.person]) {
-      grouped[item.person] = [];
-    }
-    grouped[item.person].push(item);
-  });
-
-  return grouped;
-};
-
-const groupedData = groupByPerson();
-
-const [selectedPerson, setSelectedPerson] = useState(null);
+  // group data
+  const groupedData = data.reduce((acc, item) => {
+    if (!acc[item.person]) acc[item.person] = [];
+    acc[item.person].push(item);
+    return acc;
+  }, {});
 
   return (
-  <div>
-    <h2>Transactions</h2>
+    <div>
+      <h2>Transactions</h2>
 
-    {msg && (
-      <div className="alert alert-info">{msg}</div>
-    )}
+      {msg && <div className="alert alert-info">{msg}</div>}
 
-    {/* ✅ IF NO PERSON SELECTED */}
-    {!selectedPerson ? (
-      Object.keys(groupedData).map(person => {
-        const transactions = groupedData[person];
+      {!selectedPerson ? (
+        Object.keys(groupedData).map((person) => {
+          const transactions = groupedData[person];
 
-        // calculate total
-        let total = 0;
-        transactions.forEach(t => {
-          if (t.type === "given") total += t.remainingAmount;
-          else total -= t.remainingAmount;
-        });
+          let total = 0;
+          transactions.forEach((t) => {
+            if (t.type === "given") total += t.remainingAmount;
+            else total -= t.remainingAmount;
+          });
 
-        return (
-          <div
-            key={person}
-            className="card p-3 mb-3 shadow-sm"
-            style={{ cursor: "pointer" }}
-            onClick={() => setSelectedPerson(person)}
-          >
-            <h5>👤 {person}</h5>
-            <p>Net Balance: ₹{total}</p>
-          </div>
-        );
-      })
-    ) : (
-      <div>
-        {/* 🔙 BACK BUTTON */}
-        <button
-          className="btn btn-secondary mb-3"
-          onClick={() => setSelectedPerson(null)}
-        >
-          ← Back
-        </button>
-
-        <h4>Transactions with {selectedPerson}</h4>
-
-        {!groupedData[selectedPerson] || groupedData[selectedPerson].length === 0 ? (
-  <p>No transactions left for this person</p>
-) : (
-  groupedData[selectedPerson].map(item => (
-    <div key={item._id} className="card p-3 mb-2 shadow-sm">
-      <p>
-        💰 ₹{item.amount} ({item.type}) <br />
-        📌 {item.purpose} <br />
-        🔄 Remaining: ₹{item.remainingAmount} <br />
-        📊 {item.status} <br />
-        📅 {item.date
-          ? new Date(item.date).toLocaleDateString("en-GB")
-          : "No Date"}
-      </p>
-
-      <div className="d-flex gap-2">
-        {item.status !== "completed" && (
+          return (
+            <div
+              key={person}
+              className="card p-3 mb-3 shadow-sm"
+              style={{ cursor: "pointer" }}
+              onClick={() => setSelectedPerson(person)}
+            >
+              <h5>👤 {person}</h5>
+              <p>Net Balance: ₹{total}</p>
+            </div>
+          );
+        })
+      ) : (
+        <div>
           <button
-            className="btn btn-warning"
-            onClick={() => handlePayment(item._id)}
+            className="btn btn-secondary mb-3"
+            onClick={() => setSelectedPerson(null)}
           >
-            Pay
+            ← Back
           </button>
-        )}
 
-        <button
-          className="btn btn-info"
-          onClick={() => handleEdit(item)}
-        >
-          Edit
-        </button>
+          <h4>Transactions with {selectedPerson}</h4>
 
-        <button
-          className="btn btn-danger"
-          onClick={() => handleDelete(item._id)}
-        >
-          Delete
-        </button>
-      </div>
+          {!groupedData[selectedPerson] ? (
+            <p>No transactions left</p>
+          ) : (
+            groupedData[selectedPerson].map((item) => (
+              <div key={item._id} className="card p-3 mb-2 shadow-sm">
+                <p>
+                  💰 ₹{item.amount} ({item.type}) <br />
+                  📌 {item.purpose} <br />
+                  🔄 Remaining: ₹{item.remainingAmount} <br />
+                  📊 {item.status} <br />
+                  📅{" "}
+                  {item.date
+                    ? new Date(item.date).toLocaleDateString("en-GB")
+                    : "No Date"}
+                </p>
+
+                <div className="d-flex gap-2">
+                  {item.status !== "completed" && (
+                    <button
+                      className="btn btn-warning"
+                      onClick={() => handlePayment(item._id)}
+                    >
+                      Pay
+                    </button>
+                  )}
+
+                  <button
+                    className="btn btn-info"
+                    onClick={() => handleEdit(item)}
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDelete(item._id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
-  ))
-)}
-      </div>
-      
-    )}
-    
-  </div>
-);
+  );
 }
-
 
 export default TransactionList;

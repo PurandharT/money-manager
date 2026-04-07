@@ -48,9 +48,9 @@ useEffect(() => {
     await fetch(`${API}/pay/${id}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
-      },
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${localStorage.getItem("token")}`
+},
       body: JSON.stringify({ amount: Number(amount) }),
     });
 
@@ -67,9 +67,9 @@ useEffect(() => {
     await fetch(`${API}/${item._id}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
-      },
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${localStorage.getItem("token")}`
+},
       body: JSON.stringify({
         amount: Number(newAmount),
         purpose: newPurpose,

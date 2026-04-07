@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api";
+
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const navigate = useNavigate();
@@ -48,8 +49,7 @@ function Login() {
 
         <p className="auth-link">
           Don't have an account?{" "}
-          <span style={{ color: "blue", cursor: "pointer" }}
-            onClick={() => navigate("/signup")}>
+          <span onClick={() => navigate("/signup")} style={{ color: "blue", cursor: "pointer" }}>
             Signup
           </span>
         </p>

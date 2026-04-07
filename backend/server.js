@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
+const transactionRoutes = require("./routes/transactions");
+
 const app = express();
 
 app.use(cors());
@@ -12,12 +14,24 @@ mongoose.connect("mongodb+srv://PuriAdmin:Puri123@clustermoney.6qcrwhe.mongodb.n
 .then(() => console.log("MongoDB Connected"))
 .catch(err => console.log(err));
 
-const transactionRoutes = require("./routes/transactions");
+
 app.use("/api/transactions", transactionRoutes);
 
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 
+// test route
+app.get("/", (req, res) => {
+  res.send("API is running 🚀");
+});
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
+
 app.listen(5000, () => {
     console.log("Server running on port 5000");
+});
+app.listen(process.env.PORT || 5000, () => {
+  console.log("Server running");
 });

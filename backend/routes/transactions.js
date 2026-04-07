@@ -18,6 +18,12 @@ router.get("/", auth, async (req, res) => {
     res.json(data);
 });
 
+// TEST ROUTE
+router.get("/", (req, res) => {
+  res.json({ message: "Transactions route working" });
+});
+
+
 router.put("/pay/:id", auth, async (req, res) => {
     const { amount } = req.body;
 

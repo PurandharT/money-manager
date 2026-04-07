@@ -17,7 +17,7 @@ function TransactionList({ refresh }) {
   }
 }, [data]);
 
-  useEffect(() => {
+ useEffect(() => {
   const loadData = async () => {
     try {
       const res = await fetch(API, {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const API = "http://localhost:5000/api/transactions";
+const API = "https://money-manager.onrender.com/api/transactions";
 
 function AddTransaction({ setRefresh }) {
 

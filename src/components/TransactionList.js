@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const API = "http://localhost:5000/api/transactions";
+const API = "https://money-manager.onrender.com/api/transactions";
 
 function TransactionList({ refresh }) {
   const [data, setData] = useState([]);
@@ -9,7 +9,7 @@ function TransactionList({ refresh }) {
   useEffect(() => {
     loadData();
   }, [refresh]);
-  
+
   useEffect(() => {
   if (selectedPerson && !groupedData[selectedPerson]) {
     setSelectedPerson(null);

@@ -17,4 +17,33 @@ function App() {
   );
 }
 
+import { useEffect, useState } from "react";
+
+function App() {
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+
+  useEffect(() => {
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    });
+  }, []);
+
+  const installApp = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={installApp} className="btn btn-success">
+        📲 Install App
+      </button>
+
+      {/* your existing routes/components */}
+    </div>
+  );
+}
+
 export default App;

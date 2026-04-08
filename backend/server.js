@@ -7,9 +7,12 @@ const authRoutes = require("./routes/auth");
 
 const app = express();
 
+require("dotenv").config();
+
 // app.use(cors());
 app.use(cors({
-  origin: "*"
+  origin: "https://money-manager-8ipz.vercel.app"
+  credentials: true
 }));
 app.use(express.json());
 

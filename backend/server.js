@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const cors = require("cors");
+// const cors = require("cors");
 
 const transactionRoutes = require("./routes/transactions");
 const authRoutes = require("./routes/auth");
@@ -10,10 +10,15 @@ const app = express();
 require("dotenv").config();
 
 // app.use(cors());
+
+const cors = require("cors");
+
 app.use(cors({
-  origin: "https://money-manager-8ipz.vercel.app"
+  origin: "https://money-manager-8ipz.vercel.app",
   credentials: true
 }));
+
+
 app.use(express.json());
 
 // ✅ ONLY ONE MongoDB connection (USE ENV)

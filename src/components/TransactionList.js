@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
 import API from "../api";
-//const API = "https://money-manager.onrender.com/api/transactions";
 
 function TransactionList({ refresh }) {
   const [data, setData] = useState([]);
   const [msg, setMsg] = useState("");
   const [selectedPerson, setSelectedPerson] = useState(null);
 
-  // ✅ DEFINE loadData OUTSIDE
   const loadData = async () => {
     try {
-      const res = await fetch(API, {
+      const res = await fetch(`${API}/transactions`, {
         headers: {
-          Authorization: localStorage.getItem("token"),
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
       const result = await res.json();
+      console.log("FETCHED DATA:", result); // ✅ DEBUG
 
       if (Array.isArray(result)) {
         setData(result);
@@ -28,29 +27,26 @@ function TransactionList({ refresh }) {
     }
   };
 
-  // ✅ useEffect clean
   useEffect(() => {
     loadData();
   }, [refresh]);
 
-  // reset selected person if deleted
-useEffect(() => {
-  if (selectedPerson && !data.find(d => d.person === selectedPerson)) {
-    setSelectedPerson(null);
-  }
-}, [data, selectedPerson]); // ✅ FIXED
+  useEffect(() => {
+    if (selectedPerson && !data.find(d => d.person === selectedPerson)) {
+      setSelectedPerson(null);
+    }
+  }, [data, selectedPerson]);
 
-  // 💸 Payment
   const handlePayment = async (id) => {
     const amount = prompt("Enter amount to pay:");
     if (!amount) return;
 
-    await fetch(`${API}/pay/${id}`, {
+    await fetch(`${API}/transactions/pay/${id}`, {
       method: "PUT",
       headers: {
-  "Content-Type": "application/json",
-  "Authorization": `Bearer ${localStorage.getItem("token")}`
-},
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      },
       body: JSON.stringify({ amount: Number(amount) }),
     });
 
@@ -59,17 +55,16 @@ useEffect(() => {
     loadData();
   };
 
-  // ✏️ Edit
   const handleEdit = async (item) => {
     const newAmount = prompt("Enter new amount:", item.amount);
     const newPurpose = prompt("Enter new purpose:", item.purpose);
 
-    await fetch(`${API}/${item._id}`, {
+    await fetch(`${API}/transactions/${item._id}`, {
       method: "PUT",
       headers: {
-  "Content-Type": "application/json",
-  "Authorization": `Bearer ${localStorage.getItem("token")}`
-},
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`
+      },
       body: JSON.stringify({
         amount: Number(newAmount),
         purpose: newPurpose,
@@ -81,12 +76,11 @@ useEffect(() => {
     loadData();
   };
 
-  // 🗑 Delete
   const handleDelete = async (id) => {
-    await fetch(`${API}/${id}`, {
+    await fetch(`${API}/transactions/${id}`, {
       method: "DELETE",
       headers: {
-        Authorization: localStorage.getItem("token"),
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
       },
     });
 
@@ -95,7 +89,6 @@ useEffect(() => {
     loadData();
   };
 
-  // group data
   const groupedData = data.reduce((acc, item) => {
     if (!acc[item.person]) acc[item.person] = [];
     acc[item.person].push(item);

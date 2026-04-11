@@ -1,3 +1,3 @@
-const API = "https://money-manager-bhjj.onrender.com/api/transactions";
+const API = "https://money-manager-bhjj.onrender.com/api";
 
 export default API;

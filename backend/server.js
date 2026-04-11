@@ -1,30 +1,33 @@
 const express = require("express");
 const mongoose = require("mongoose");
-// const cors = require("cors");
+const cors = require("cors");
+
+require("dotenv").config();
 
 const transactionRoutes = require("./routes/transactions");
 const authRoutes = require("./routes/auth");
 
 const app = express();
 
-require("dotenv").config();
-
-// app.use(cors());
-
-const cors = require("cors");
-
+// ✅ CORS (allow Vercel frontend)
 app.use(cors({
-  origin: "https://money-manager-8ipz.vercel.app",
+  origin: [
+    "https://money-manager-8ipz.vercel.app",
+    "http://localhost:3000" // for local testing
+  ],
   credentials: true
 }));
 
-
+// ✅ Middleware
 app.use(express.json());
 
-// ✅ ONLY ONE MongoDB connection (USE ENV)
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.log(err));
+// ✅ MongoDB Connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("MongoDB Connected"))
+.catch(err => console.error("Mongo Error:", err));
 
 // ✅ Routes
 app.use("/api/transactions", transactionRoutes);
@@ -35,7 +38,14 @@ app.get("/", (req, res) => {
   res.send("API is running 🚀");
 });
 
-// ✅ ONLY ONE listen
-app.listen(process.env.PORT || 5000, () => {
-  console.log("Server running");
+// ✅ Health check (optional but useful)
+app.get("/api", (req, res) => {
+  res.json({ message: "Backend working ✅" });
+});
+
+// ✅ Start server
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

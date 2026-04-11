@@ -9,21 +9,39 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const res = await fetch(`${API}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(form)
-    });
+    try {
+      const res = await fetch(`${API}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(form)
+      });
 
-    const data = await res.json();
+      // ✅ FIRST get raw response (important fix)
+      const text = await res.text();
+      console.log("RAW RESPONSE:", text);
 
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      navigate("/home");
-    } else {
-      alert("Invalid Credentials ❌");
+      // ✅ THEN safely parse JSON
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        console.error("Not JSON response:", text);
+        alert("Server error ❌ (Check backend)");
+        return;
+      }
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        navigate("/home");
+      } else {
+        alert(data.message || "Invalid Credentials ❌");
+      }
+
+    } catch (error) {
+      console.error("Login Error:", error);
+      alert("Server not reachable ❌");
     }
   };
 
@@ -49,7 +67,10 @@ function Login() {
 
         <p className="auth-link">
           Don't have an account?{" "}
-          <span onClick={() => navigate("/signup")} style={{ color: "blue", cursor: "pointer" }}>
+          <span
+            onClick={() => navigate("/signup")}
+            style={{ color: "blue", cursor: "pointer" }}
+          >
             Signup
           </span>
         </p>

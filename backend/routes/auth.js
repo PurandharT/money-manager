@@ -4,6 +4,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+const isValidEmail = (value) => /\S+@\S+\.\S+/.test(value);
+
 // ================= SIGNUP =================
 router.post("/signup", async (req, res) => {
   try {
@@ -11,6 +13,10 @@ router.post("/signup", async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({ message: "All fields required ❌" });
+    }
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ message: "Valid email required ❌" });
     }
 
     const existingUser = await User.findOne({ email });
@@ -47,6 +53,15 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "All fields required ❌" });
     }
 
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ message: "Enter the same email you used for signup ❌" });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is not configured");
+      return res.status(500).json({ message: "Server config error ❌" });
+    }
+
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -73,4 +88,5 @@ router.post("/login", async (req, res) => {
   }
 });
 
+module.exports = router;
 module.exports = router;

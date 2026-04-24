@@ -10,11 +10,35 @@ const authRoutes = require("./routes/auth");
 const app = express();
 
 // ✅ CORS (allow Vercel frontend)
+const allowedOrigins = [
+  "https://money-manager-8ipz.vercel.app",
+  "http://localhost:3000"
+];
+
 app.use(cors({
   origin: [
     "https://money-manager-8ipz.vercel.app",
     "http://localhost:3000" // for local testing
   ],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+
+    let hostname = "";
+    try {
+      hostname = new URL(origin).hostname;
+    } catch (err) {
+      return callback(new Error("Invalid origin"));
+    }
+
+    const isAllowed =
+      allowedOrigins.includes(origin) || /\.vercel\.app$/.test(hostname);
+
+    if (isAllowed) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("Not allowed by CORS"));
+  },
   credentials: true
 }));
 

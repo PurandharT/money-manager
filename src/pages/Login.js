@@ -6,29 +6,42 @@ function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
+  const isValidEmail = (value) => /\S+@\S+\.\S+/.test(value);
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    if (!isValidEmail(form.email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
       const res = await fetch(`${API}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(form)
-      });
+        body: JSON.stringify(form),
+        signal: controller.signal
+      }).finally(() => clearTimeout(timeoutId));
 
-      // ✅ FIRST get raw response (important fix)
       const text = await res.text();
-      console.log("RAW RESPONSE:", text);
 
-      // ✅ THEN safely parse JSON
       let data;
       try {
         data = JSON.parse(text);
-      } catch (err) {
-        console.error("Not JSON response:", text);
-        alert("Server error ❌ (Check backend)");
+
+      } catch {
+        alert("Backend returned an invalid response. Please try again in a few seconds.");
+        return;
+      }
+
+      if (!res.ok) {
+        alert(data.message || "Login failed. Please verify your credentials.");
         return;
       }
 
@@ -40,7 +53,12 @@ function Login() {
       }
 
     } catch (error) {
-      console.error("Login Error:", error);
+
+      if (error.name === "AbortError") {
+        alert("Backend is taking too long to respond (cold start). Please retry in 15-30 seconds.");
+        return;
+      }
+
       alert("Server not reachable ❌");
     }
   };

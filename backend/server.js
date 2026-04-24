@@ -16,10 +16,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: [
-    "https://money-manager-8ipz.vercel.app",
-    "http://localhost:3000" // for local testing
-  ],
+
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
 
